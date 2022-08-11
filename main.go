@@ -10,8 +10,12 @@ import (
 )
 
 func main() {
-	fName := "data.csv"
-	// data.csvを作成する
+	scraping_csv("data.csv", "https://award.tabelog.com/hyakumeiten/izakaya/2021/")
+}
+
+func scraping_csv(fileName string, URL string) {
+	fName := fileName
+	// csvを作成する
 	file, err := os.Create(fName)
 	if err != nil {
 		log.Fatalf("Could not create file, err :%q", err)
@@ -26,9 +30,7 @@ func main() {
 	writer.Write([]string{"ShopName", "Area", "Holiday", "Rating", "Target"})
 
 	// collyインスタンス
-	c := colly.NewCollector(
-	//colly.AllowedDomains("tabelog.com"),
-	)
+	c := colly.NewCollector()
 
 	// html -> .internship_meta要素にアクセス
 	c.OnHTML(".hyakumeiten-shop__item", func(e *colly.HTMLElement) {
@@ -48,7 +50,7 @@ func main() {
 
 	start := time.Now()
 	// スクレイピング
-	c.Visit("https://award.tabelog.com/hyakumeiten/izakaya/2021/")
+	c.Visit(URL)
 
 	// 後処理
 	end := time.Now()
