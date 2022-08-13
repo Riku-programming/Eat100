@@ -3,16 +3,16 @@ package main
 import (
 	"fmt"
 	"github.com/gocolly/colly"
-	"log"
-	"time"
 )
 
 type ShopDetail struct {
+	ShopName      string
 	PhoneNumber   string
 	ReserveStatus string
 	Address       string
 	Time          string
 	Payment       string
+	Cost          string
 }
 
 func main() {
@@ -32,26 +32,21 @@ func scraping(URL string) {
 	})
 	detailCollector.OnHTML(".rstinfo-table__table", func(e *colly.HTMLElement) {
 		shopDetail := ShopDetail{
+			ShopName:      e.ChildText(".rstinfo-table__name-wrap"),
 			PhoneNumber:   e.ChildText(".rstinfo-table__tel-num"),
 			ReserveStatus: e.ChildText(".rstinfo-table__reserve-status"),
-			Address:       e.ChildText(".rstinfo-table__reserve-address"),
+			Address:       e.ChildText(".listlink"),
 			Time:          e.ChildText(".rstinfo-table__subject-text"),
 			Payment:       e.ChildText(".rstinfo-table__pay-item"),
+			Cost:          e.DOM.Find(".gly-b-dinner").First().Text(),
 		}
 		shopDetails = append(shopDetails, shopDetail)
 	})
-	// スクレイピング
 	c.OnRequest(func(request *colly.Request) {
 		fmt.Println("ここにリクエストするよ", request.URL.String())
-
 	})
-	start := time.Now()
+	// スクレイピング
 	c.Visit(URL)
-
 	// 後処理
 	fmt.Println(shopDetails)
-	end := time.Now()
-	log.Println("Scraping Complete")
-	log.Printf("Time:%v", end.Sub(start))
-	log.Println(c)
 }
