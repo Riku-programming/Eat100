@@ -7,11 +7,11 @@ import (
 
 type ShopDetail struct {
 	ShopName      string
-	PhoneNumber   string
 	ReserveStatus string
 	Address       string
 	Time          string
 	Payment       string
+	PhoneNumber   string
 	Cost          string
 }
 
@@ -30,14 +30,14 @@ func scraping(URL string) {
 		link := e.ChildAttr(".hyakumeiten-shop__target", "href")
 		detailCollector.Visit(e.Request.AbsoluteURL(link))
 	})
-	detailCollector.OnHTML(".rstinfo-table__table", func(e *colly.HTMLElement) {
+	detailCollector.OnHTML(".rstinfo-table", func(e *colly.HTMLElement) {
 		shopDetail := ShopDetail{
 			ShopName:      e.ChildText(".rstinfo-table__name-wrap"),
-			PhoneNumber:   e.ChildText(".rstinfo-table__tel-num"),
 			ReserveStatus: e.ChildText(".rstinfo-table__reserve-status"),
 			Address:       e.ChildText(".listlink"),
 			Time:          e.ChildText(".rstinfo-table__subject-text"),
 			Payment:       e.ChildText(".rstinfo-table__pay-item"),
+			PhoneNumber:   e.DOM.Find(".rstinfo-table__tel-num").First().Text(),
 			Cost:          e.DOM.Find(".gly-b-dinner").First().Text(),
 		}
 		shopDetails = append(shopDetails, shopDetail)
