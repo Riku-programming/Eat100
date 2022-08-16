@@ -1,6 +1,7 @@
 package shop_detail_scraping
 
 import (
+	"Eat100/category"
 	"Eat100/entity"
 	"fmt"
 	"github.com/gocolly/colly"
@@ -19,7 +20,7 @@ func ShopDetailScraping(URL string) []entity.ShopDetail {
 		colly.MaxDepth(2),
 		colly.Async(true),
 	)
-	c.Limit(&colly.LimitRule{DomainGlob: "*", Parallelism: 128})
+	c.Limit(&colly.LimitRule{DomainGlob: "*", Parallelism: 32})
 	detailCollector := c.Clone()
 	// html -> .hyakumeiten-shop__item要素にアクセス
 	c.OnHTML(".hyakumeiten-shop__item", func(e *colly.HTMLElement) {
@@ -30,6 +31,7 @@ func ShopDetailScraping(URL string) []entity.ShopDetail {
 	detailCollector.OnHTML(".rstinfo-table", func(e *colly.HTMLElement) {
 		fmt.Println(e.Request.URL.String())
 		shopDetail := entity.ShopDetail{
+			Category:    category.ClassifyCategory(category.ExtractCategoryFromURL(URL)),
 			ShopName:    e.ChildText(".rstinfo-table__name-wrap"),
 			Reservable:  IsReservable(e.ChildText(".rstinfo-table__reserve-status")),
 			Address:     e.ChildText(".listlink"),

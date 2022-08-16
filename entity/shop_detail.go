@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type ShopDetail struct {
 	gorm.Model
 
+	Category    string
 	ShopName    string
 	Reservable  bool
 	Address     string
