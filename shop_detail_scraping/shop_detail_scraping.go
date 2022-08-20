@@ -13,7 +13,7 @@ const (
 	NotReservable   = "予約不可"
 )
 
-func ShopDetailScraping(URL string) []entity.ShopDetail {
+func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	shopDetails := make([]entity.ShopDetail, 0)
 	// collyインスタンス
 	c := *colly.NewCollector(
@@ -31,7 +31,7 @@ func ShopDetailScraping(URL string) []entity.ShopDetail {
 	detailCollector.OnHTML(".rstinfo-table", func(e *colly.HTMLElement) {
 		fmt.Println(e.Request.URL.String())
 		shopDetail := entity.ShopDetail{
-			Category:    category.ClassifyCategory(category.ExtractCategoryFromURL(URL)),
+			Category:    category.ClassifyCategory(categoryName),
 			ShopName:    e.ChildText(".rstinfo-table__name-wrap"),
 			Reservable:  IsReservable(e.ChildText(".rstinfo-table__reserve-status")),
 			Address:     e.ChildText(".listlink"),

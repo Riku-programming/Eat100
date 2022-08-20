@@ -15,7 +15,6 @@ func ExtractCategoryFromURL(URL string) string {
 	// URLが "https://award.tabelog.com/hyakumeiten/unagi"の場合unagiが返され
 	// URLが "https://award.tabelog.com/hyakumeiten/izakaya/2021"の場合izakayaが返される
 	category := strings.Split(u.Path, "/")[2]
-	// カテゴリによってはURLが違う。
 	//例えば居酒屋などは/izakayaだが寿司などは/sushi_tokyoのようにエリア分けされている
 	if strings.Contains(category, "_") {
 		category := strings.Split(category, "_")[0]
@@ -36,4 +35,16 @@ func ClassifyCategory(category string) string {
 	default:
 		return "カテゴリーなし"
 	}
+}
+
+func IsPopular(URL string) bool {
+	u, err := url.Parse(URL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	category := strings.Split(u.Path, "/")[2]
+	if strings.Contains(category, "_") {
+		return true
+	}
+	return false
 }
