@@ -10,21 +10,22 @@ import (
 
 const baseURL string = "https://award.tabelog.com/hyakumeiten/"
 
-var keyWord = "sushi_tokyo"
-var URL = baseURL + keyWord
-
 func main() {
 	var detail entity.ShopDetail
 	db := database.NewDB(detail)
-	categoryName := category.ExtractCategoryFromURL(URL)
-	if category.IsPopular(URL) == true {
-		for _, v := range []string{"tokyo", "east", "west"} {
-			URL := baseURL + strings.Split(categoryName, "_")[0] + "_" + v
-			popular := shop_detail_scraping.ShopDetailScraping(URL, categoryName)
-			database.CreateShopDetails(db, popular)
+	categoryList := entity.CreateCategoryList()
+	for _, v := range categoryList {
+		categoryName := v.CategoryName()
+		searchWord := v.SearchWord()
+		if category.IsPopular(searchWord) == true {
+			for _, v := range []string{"tokyo", "east", "west"} {
+				URL := baseURL + strings.Split(searchWord, "_")[0] + "_" + v
+				scrapingResult := shop_detail_scraping.ShopDetailScraping(URL, categoryName)
+				database.CreateShopDetails(db, scrapingResult)
+			}
+			return
 		}
-		return
+		scrapingResult := shop_detail_scraping.ShopDetailScraping(baseURL+searchWord, categoryName)
+		database.CreateShopDetails(db, scrapingResult)
 	}
-	tonkatu := shop_detail_scraping.ShopDetailScraping(URL, categoryName)
-	database.CreateShopDetails(db, tonkatu)
 }

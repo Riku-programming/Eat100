@@ -1,7 +1,6 @@
 package shop_detail_scraping
 
 import (
-	"Eat100/category"
 	"Eat100/entity"
 	"fmt"
 	"github.com/gocolly/colly"
@@ -16,7 +15,7 @@ const (
 )
 
 // スクレイピングする際の並列実行数
-const parallelism int = 32
+const parallelism int = 2
 
 func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	shopDetails := make([]entity.ShopDetail, 0)
@@ -36,9 +35,10 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	detailCollector.OnHTML(".rstinfo-table", func(e *colly.HTMLElement) {
 		fmt.Println(e.Request.URL.String())
 		shopDetail := entity.ShopDetail{
-			Category:    category.ClassifyCategory(categoryName),
+			//Category:    category.ClassifyCategory(categoryName),
+			Category:    categoryName,
 			ShopName:    e.ChildText(".rstinfo-table__name-wrap"),
-			Reservable:  IsReservable(e.ChildText(".rstinfo-table__reserve-status")),
+			Reservable:  isReservable(e.ChildText(".rstinfo-table__reserve-status")),
 			Address:     e.ChildText(".listlink"),
 			Time:        e.ChildText(".rstinfo-table__subject-text"),
 			Payment:     e.ChildText(".rstinfo-table__pay-item"),
@@ -61,7 +61,7 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	return shopDetails
 }
 
-func IsReservable(status string) bool {
+func isReservable(status string) bool {
 	switch status {
 	case Reservable:
 		return true
