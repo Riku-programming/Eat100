@@ -12,6 +12,6 @@ type ShopDetail struct {
 	Time        string
 	Payment     string
 	PhoneNumber string
-	Cost        string
+	Cost        int
 	URL         string
 }

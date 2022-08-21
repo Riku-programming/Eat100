@@ -5,6 +5,8 @@ import (
 	"Eat100/entity"
 	"fmt"
 	"github.com/gocolly/colly"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -13,6 +15,9 @@ const (
 	NotReservable   = "予約不可"
 )
 
+// スクレイピングする際の並列実行数
+const parallelism int = 32
+
 func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	shopDetails := make([]entity.ShopDetail, 0)
 	// collyインスタンス
@@ -20,7 +25,7 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 		colly.MaxDepth(2),
 		colly.Async(true),
 	)
-	c.Limit(&colly.LimitRule{DomainGlob: "*", Parallelism: 32})
+	c.Limit(&colly.LimitRule{DomainGlob: "*", Parallelism: parallelism})
 	detailCollector := c.Clone()
 	// html -> .hyakumeiten-shop__item要素にアクセス
 	c.OnHTML(".hyakumeiten-shop__item", func(e *colly.HTMLElement) {
@@ -38,7 +43,7 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 			Time:        e.ChildText(".rstinfo-table__subject-text"),
 			Payment:     e.ChildText(".rstinfo-table__pay-item"),
 			PhoneNumber: e.DOM.Find(".rstinfo-table__tel-num").First().Text(),
-			Cost:        e.DOM.Find(".gly-b-dinner").First().Text(),
+			Cost:        costToInt(e.DOM.Find(".gly-b-dinner").First().Text()),
 			URL:         e.Request.URL.String(),
 		}
 		fmt.Println(shopDetail)
@@ -67,4 +72,15 @@ func IsReservable(status string) bool {
 	default:
 		return false
 	}
+}
+
+// CostToInt スクレイピングしたstring型のCostをint型に変換する
+// example ￥30,000～￥39,999 → 30000
+func costToInt(costString string) int {
+	replace1 := strings.Replace(costString, "￥", "", -1)
+	replace2 := strings.Replace(replace1, ",", "", -1)
+	replace3 := strings.Split(replace2, "～")
+	cost, _ := strconv.Atoi(replace3[0])
+	fmt.Println(cost)
+	return cost
 }
