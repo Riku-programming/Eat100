@@ -1,7 +1,6 @@
 package main
 
 import (
-	"Eat100/category"
 	"Eat100/database"
 	"Eat100/entity"
 	"Eat100/shop_detail_scraping"
@@ -17,13 +16,12 @@ func main() {
 	for _, v := range categoryList {
 		categoryName := v.CategoryName()
 		searchWord := v.SearchWord()
-		if category.IsPopular(searchWord) == true {
-			for _, v := range []string{"tokyo", "east", "west"} {
+		if strings.Contains(searchWord, "_") == true {
+			for _, v := range []string{"east", "west"} {
 				URL := baseURL + strings.Split(searchWord, "_")[0] + "_" + v
 				scrapingResult := shop_detail_scraping.ShopDetailScraping(URL, categoryName)
 				database.CreateShopDetails(db, scrapingResult)
 			}
-			return
 		}
 		scrapingResult := shop_detail_scraping.ShopDetailScraping(baseURL+searchWord, categoryName)
 		database.CreateShopDetails(db, scrapingResult)

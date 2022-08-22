@@ -36,33 +36,9 @@ var (
 
 func CreateCategoryList() []Category {
 	categoryList := make([]Category, 0)
-	categoryList = append(categoryList, Curry)
-	categoryList = append(categoryList, Unagi)
-	categoryList = append(categoryList, Yakitori)
-	categoryList = append(categoryList, Sushi)
-	categoryList = append(categoryList, Tonkatsu)
-	categoryList = append(categoryList, Soba)
-	categoryList = append(categoryList, Hamburger)
-	categoryList = append(categoryList, Okonomiyaki)
-	categoryList = append(categoryList, Tempura)
-	categoryList = append(categoryList, Steak)
-	categoryList = append(categoryList, Yoshoku)
-	categoryList = append(categoryList, Izakaya)
-	categoryList = append(categoryList, Ramen)
-	categoryList = append(categoryList, Yakiniku)
-	categoryList = append(categoryList, Cafe)
-	categoryList = append(categoryList, Gyoza)
-	categoryList = append(categoryList, Teishoku)
-	categoryList = append(categoryList, Kissaten)
-	categoryList = append(categoryList, Pizza)
-	categoryList = append(categoryList, Bistro)
-	categoryList = append(categoryList, Chinese)
-	categoryList = append(categoryList, Japanese)
-	categoryList = append(categoryList, French)
-	categoryList = append(categoryList, Italian)
-	categoryList = append(categoryList, Bread)
-	categoryList = append(categoryList, Sweets)
-
+	categoryList = append(
+		categoryList, Curry, Unagi, Yakitori, Sushi, Tonkatsu, Soba, Hamburger, Okonomiyaki, Tempura, Steak, Yoshoku, Izakaya, Ramen, Yakiniku, Cafe, Gyoza, Teishoku, Kissaten, Pizza, Bistro, Chinese, Japanese, French, Italian, Bread, Sweets,
+	)
 	return categoryList
 }
 
