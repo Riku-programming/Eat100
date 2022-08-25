@@ -1,12 +1,42 @@
 version: "3"
 services:
+  go:
+    container_name: sample-go
+    build:
+      context: ./
+      dockerfile: ./docker/go/Dockerfile
+    ports:
+      - "8080:8080"
+      - "2345:2345"
+    volumes:
+      - ./backend:/go/src/app
+    networks:
+      - common
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_PTRACE
+
   db:
-    image: mysql:5.7
+    container_name: shop-db
+    image: mysql:latest
     environment:
-      - MYSQL_DATABASE=sample_db
+      - MYSQL_DATABASE=shop_db
       - MYSQL_ROOT_PASSWORD=password
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
+    volumes:
+      - sample-dbdata:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - common
+
+volumes:
+  sample-dbdata:
+    driver: local
+
+networks:
+  common:
+    driver: bridge
