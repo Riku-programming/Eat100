@@ -4,12 +4,23 @@ import (
 	"Eat100/database"
 	"Eat100/entity"
 	"Eat100/shop_detail_scraping"
+	"fmt"
+	"net/http"
 	"strings"
 )
 
 const baseURL string = "https://award.tabelog.com/hyakumeiten/"
 
+func helloHander(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "<h1>Hello Normal TEST GOOOOOOD</h1>")
+}
+
 func main() {
+	http.HandleFunc("/", helloHander)
+	http.ListenAndServe(":8080", nil)
+}
+
+func Init() {
 	var detail entity.ShopDetail
 	db := database.NewDB(detail)
 	categoryList := entity.CreateCategoryList()
