@@ -15,7 +15,7 @@ const (
 )
 
 // スクレイピングする際の並列実行数
-const parallelism int = 2
+const parallelism int = 128
 
 func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	shopDetails := make([]entity.ShopDetail, 0)
@@ -24,13 +24,17 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 		colly.MaxDepth(2),
 		colly.Async(true),
 	)
-	c.Limit(&colly.LimitRule{DomainGlob: "*", Parallelism: parallelism})
+	err := c.Limit(&colly.LimitRule{DomainGlob: "*", Parallelism: parallelism})
+	if err != nil {
+		return nil
+	}
 	detailCollector := c.Clone()
 	// html -> .hyakumeiten-shop__item要素にアクセス
 	c.OnHTML(".hyakumeiten-shop__item", func(e *colly.HTMLElement) {
 		//詳細リンク
 		link := e.ChildAttr(".hyakumeiten-shop__target", "href")
 		detailCollector.Visit(e.Request.AbsoluteURL(link))
+
 	})
 	detailCollector.OnHTML(".rstinfo-table", func(e *colly.HTMLElement) {
 		fmt.Println(e.Request.URL.String())
@@ -52,8 +56,17 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	c.OnRequest(func(request *colly.Request) {
 		fmt.Println("ここにリクエストするよ", request.URL.String())
 	})
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
 	// スクレイピング
-	c.Visit(URL)
+	err = c.Visit(URL)
+	if err != nil {
+		return nil
+	}
 	c.Wait()
 	detailCollector.Wait()
 	//// 後処理
