@@ -14,6 +14,10 @@ const (
 	NotReservable   = "予約不可"
 )
 
+const (
+	CardAccepted = "カード可"
+)
+
 // スクレイピングする際の並列実行数
 const parallelism int = 128
 
@@ -45,7 +49,7 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 			Reservable:  isReservable(e.ChildText(".rstinfo-table__reserve-status")),
 			Address:     e.ChildText(".listlink"),
 			Time:        e.ChildText(".rstinfo-table__subject-text"),
-			Payment:     e.ChildText(".rstinfo-table__pay-item"),
+			Payment:     isPayment(e.ChildText(".rstinfo-table__pay-item")),
 			PhoneNumber: e.DOM.Find(".rstinfo-table__tel-num").First().Text(),
 			Cost:        costToInt(e.DOM.Find(".gly-b-dinner").First().Text()),
 			URL:         e.Request.URL.String(),
@@ -87,6 +91,13 @@ func isReservable(status string) bool {
 	}
 }
 
+func isPayment(status string) bool {
+	if strings.Contains(status, CardAccepted) {
+		return true
+	}
+	return false
+}
+
 // CostToInt スクレイピングしたstring型のCostをint型に変換する
 // example ￥30,000～￥39,999 → 30000
 func costToInt(costString string) int {
@@ -94,6 +105,5 @@ func costToInt(costString string) int {
 	replace2 := strings.Replace(replace1, ",", "", -1)
 	replace3 := strings.Split(replace2, "～")
 	cost, _ := strconv.Atoi(replace3[0])
-	fmt.Println(cost)
 	return cost
 }

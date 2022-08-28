@@ -10,7 +10,7 @@ type ShopDetail struct {
 	Reservable  bool
 	Address     string
 	Time        string
-	Payment     string
+	Payment     bool
 	PhoneNumber string
 	Cost        int
 	URL         string
