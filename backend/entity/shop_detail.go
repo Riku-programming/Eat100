@@ -2,7 +2,7 @@ package entity
 
 import "gorm.io/gorm"
 
-type ShopDetail struct {
+type Restaurant struct {
 	gorm.Model
 
 	Category    string

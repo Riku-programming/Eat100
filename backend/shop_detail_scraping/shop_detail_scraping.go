@@ -21,8 +21,8 @@ const (
 // スクレイピングする際の並列実行数
 const parallelism int = 128
 
-func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
-	shopDetails := make([]entity.ShopDetail, 0)
+func ShopDetailScraping(URL string, categoryName string) []entity.Restaurant {
+	shopDetails := make([]entity.Restaurant, 0)
 	// collyインスタンス
 	c := *colly.NewCollector(
 		colly.MaxDepth(2),
@@ -42,7 +42,7 @@ func ShopDetailScraping(URL string, categoryName string) []entity.ShopDetail {
 	})
 	detailCollector.OnHTML(".rstinfo-table", func(e *colly.HTMLElement) {
 		fmt.Println(e.Request.URL.String())
-		shopDetail := entity.ShopDetail{
+		shopDetail := entity.Restaurant{
 			//Category:    category.ClassifyCategory(categoryName),
 			Category:    categoryName,
 			ShopName:    e.ChildText(".rstinfo-table__name-wrap"),

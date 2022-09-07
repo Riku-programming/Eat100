@@ -1,28 +1,31 @@
 package main
 
 import (
+	"Eat100/article"
 	"Eat100/database"
 	"Eat100/entity"
+	"Eat100/handler"
 	"Eat100/shop_detail_scraping"
-	"fmt"
-	"net/http"
+	"github.com/gin-gonic/gin"
 	"strings"
 )
 
 const baseURL string = "https://award.tabelog.com/hyakumeiten/"
 
-func helloHander(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h1>Hello Normal TEST GOOOOOOD</h1>")
-}
-
 func main() {
-	http.HandleFunc("/", helloHander)
-	http.ListenAndServe(":8080", nil)
+	Init()
+	article := article.New()
+	database.DBOpen()
+	defer database.DBClose()
+	r := gin.Default()
+	r.GET("/article", handler.ArticlesGet(article))
+	r.Run(":8080")
 }
 
 func Init() {
-	var detail entity.ShopDetail
-	db := database.NewDB(detail)
+	var detail entity.Restaurant
+	db := database.DbInit()
+	db.AutoMigrate(&detail)
 	categoryList := entity.CreateCategoryList()
 	for _, v := range categoryList {
 		categoryName := v.CategoryName()

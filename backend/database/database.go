@@ -8,8 +8,50 @@ import (
 	"log"
 )
 
+type SQLHandler struct {
+	DB  *gorm.DB
+	Err error
+}
+
+var dbConn *SQLHandler
+
+//fixme  eat100を手で作る必要あり
+
+func DBOpen() {
+	dbConn = NewSQLHandler()
+}
+
+func DBClose() {
+	sqlDB, _ := dbConn.DB.DB()
+	sqlDB.Close()
+}
+
+func NewSQLHandler() *SQLHandler {
+	dsn := "root:password@tcp(Eat100DB)/eat100?charset=utf8mb4&parseTime=true"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	sqlHandler := new(SQLHandler)
+	sqlHandler.DB = db
+	return sqlHandler
+}
+
+func GetDBConn() *SQLHandler {
+	return dbConn
+}
+
+func BeginTransaction() *gorm.DB {
+	dbConn.DB = dbConn.DB.Begin()
+	return dbConn.DB
+}
+
+func RollBack() {
+	dbConn.DB.Rollback()
+}
+
 func DbInit() *gorm.DB {
-	dsn := "root:password@tcp(Eat100DB)/shop_db?charset=utf8mb4&parseTime=true"
+	dsn := "root:password@tcp(Eat100DB)/eat100?charset=utf8mb4&parseTime=true"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
@@ -17,19 +59,21 @@ func DbInit() *gorm.DB {
 	return db
 }
 
-func Inserts(db *gorm.DB, shopDetails []entity.ShopDetail) {
+func Inserts(db *gorm.DB, shopDetails []entity.Restaurant) {
 	result := db.Create(&shopDetails)
 	if result.Error != nil {
 		log.Fatal(result.Error)
 	}
 	fmt.Println("count:", result.RowsAffected)
 }
-func NewDB(detail entity.ShopDetail) *gorm.DB {
-	db := DbInit()
-	db.AutoMigrate(&detail)
-	return db
-}
 
-func CreateShopDetails(db *gorm.DB, shopDetails []entity.ShopDetail) {
+//todo これ本当に必要かよく考える
+//func NewDB(detail entity.ShopDetail) *gorm.DB {
+//	db := DbInit()
+//	db.AutoMigrate(&detail)
+//	return db
+//}
+
+func CreateShopDetails(db *gorm.DB, shopDetails []entity.Restaurant) {
 	Inserts(db, shopDetails)
 }

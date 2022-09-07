@@ -21,7 +21,7 @@ services:
     container_name: Eat100DB
     image: mysql:latest
     environment:
-      - MYSQL_DATABASE=shop_db
+      - MYSQL_DATABASE=eat100
       - MYSQL_ROOT_PASSWORD=password
     command: >
       --character-set-server=utf8mb4
