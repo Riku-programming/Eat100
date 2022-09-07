@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"Eat100/article"
+	"Eat100/restaurant"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func ArticlesGet(articles *article.Articles) gin.HandlerFunc {
+func RestaurantsGet(restaurants *restaurant.Restaurants) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		result := articles.GetAll()
+		result := restaurants.GetAll()
 		c.JSON(http.StatusOK, result)
 	}
 }

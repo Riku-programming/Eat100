@@ -1,10 +1,10 @@
 package main
 
 import (
-	"Eat100/article"
 	"Eat100/database"
 	"Eat100/entity"
 	"Eat100/handler"
+	"Eat100/restaurant"
 	"Eat100/shop_detail_scraping"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -13,12 +13,12 @@ import (
 const baseURL string = "https://award.tabelog.com/hyakumeiten/"
 
 func main() {
-	Init()
-	article := article.New()
+	//Init()
+	restaurant := restaurant.New()
 	database.DBOpen()
 	defer database.DBClose()
 	r := gin.Default()
-	r.GET("/article", handler.ArticlesGet(article))
+	r.GET("/restaurant", handler.RestaurantsGet(restaurant))
 	r.Run(":8080")
 }
 
