@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"os"
 )
 
 type SQLHandler struct {
@@ -27,7 +28,14 @@ func DBClose() {
 }
 
 func NewSQLHandler() *SQLHandler {
-	dsn := "root:password@tcp(Eat100DB)/eat100?charset=utf8mb4&parseTime=true"
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	dbName := os.Getenv("DB_NAME")
+
+	//dsn := "root:password@tcp(Eat100DB)/eat100?charset=utf8mb4&parseTime=true"
+	dsn := user + ":" + password + "@tcp(" + host + ")" + "/" + dbName + "?charset=utf8mb4&parseTime=true"
+	fmt.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")

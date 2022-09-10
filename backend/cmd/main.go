@@ -6,13 +6,17 @@ import (
 	"Eat100/handler"
 	"Eat100/restaurant"
 	"Eat100/shop_detail_scraping"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"os"
 	"strings"
 )
 
 const baseURL string = "https://award.tabelog.com/hyakumeiten/"
 
 func main() {
+	setEnv()
 	//Init()
 	restaurant := restaurant.New()
 	database.DBOpen()
@@ -40,4 +44,26 @@ func Init() {
 		scrapingResult := shop_detail_scraping.ShopDetailScraping(baseURL+searchWord, categoryName)
 		database.CreateShopDetails(db, scrapingResult)
 	}
+}
+
+func setEnv() {
+	env := os.Getenv("ENV")
+	fmt.Println(env)
+	if "" == env {
+		env = "development"
+	}
+	err := godotenv.Load(".env." + env + ".local")
+	if err != nil {
+		fmt.Println("Its not test environment")
+	}
+
+	if "test" != env {
+		err := godotenv.Load(".env.local")
+		if err != nil {
+			fmt.Println("cant load .env.local")
+		}
+	}
+	godotenv.Load(".env." + env)
+	fmt.Println(os.Getenv("PORT"))
+	godotenv.Load()
 }

@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-source ../.env
+source ../.env.development
 DATETIME=$(date +%Y%m)
 
 docker container exec -it "$DB_HOST" bash -c "mysqldump -h $DB_HOST -P $PORT -u $DB_USER -p$DB_PASSWORD --no-tablespaces $DB_NAME > ./var/lib/mysql/$DATETIME.sql"
