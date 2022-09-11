@@ -8,7 +8,11 @@ import (
 
 func RestaurantsGet(restaurants *restaurant.Restaurants) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		result := restaurants.GetAll()
+		category := c.Query("category")
+		address := c.Query("address")
+		reservable := c.Query("reservable")
+		payment := c.Query("payment")
+		result := restaurants.GetAll(category, address, reservable, payment)
 		c.JSON(http.StatusOK, result)
 	}
 }

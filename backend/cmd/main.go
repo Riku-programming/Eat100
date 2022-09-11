@@ -21,8 +21,9 @@ func main() {
 	restaurant := restaurant.New()
 	database.DBOpen()
 	defer database.DBClose()
+	gin.SetMode("debug")
 	r := gin.Default()
-	r.GET("/restaurant", handler.RestaurantsGet(restaurant))
+	r.GET("/restaurants", handler.RestaurantsGet(restaurant))
 	r.Run(":8080")
 }
 
