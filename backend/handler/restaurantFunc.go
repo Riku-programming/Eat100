@@ -8,11 +8,8 @@ import (
 
 func RestaurantsGet(restaurants *restaurant.Restaurants) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		category := c.Query("category")
-		address := c.Query("address")
-		reservable := c.Query("reservable")
-		payment := c.Query("payment")
-		result := restaurants.GetAll(category, address, reservable, payment)
+		var fields = map[string]string{"category": c.Query("category"), "address": c.Query("address"), "reservable": c.Query("reservable"), "payment": c.Query("payment")}
+		result := restaurants.GetSearchResult(fields)
 		c.JSON(http.StatusOK, result)
 	}
 }

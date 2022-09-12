@@ -3,6 +3,7 @@ package restaurant
 import (
 	"Eat100/database"
 	"Eat100/entity"
+	"fmt"
 )
 
 func New() *Restaurants {
@@ -25,12 +26,17 @@ type SearchResult struct {
 	URL         string `json:",omitempty"`
 }
 
-func (r *Restaurants) GetAll(categoryName, address, reservable, payment string) []SearchResult {
-	db := database.GetDBConn().DB
+func (r *Restaurants) GetSearchResult(fields map[string]string) []SearchResult {
 	var searchResult []SearchResult
-	// SELECT shop_name FROM restaurants WHERE category like '%' and address like '%' and reservable  like '%' and payment like '%'
-	// fixme このクエリ汚いので直す
-	if err := db.Table("restaurants").Where("category LIKE ? AND address LIKE ? AND reservable LIKE ? AND payment LIKE ?", categoryName+"%", address+"%", reservable+"%", payment+"%").Find(&searchResult).Error; err != nil {
+	db := database.GetDBConn().DB
+	queryDB := db.Table("restaurants")
+	for key, value := range fields {
+		if value != "" {
+			s := fmt.Sprintf("%s LIKE ?", key)
+			queryDB = queryDB.Where(s, value+"%")
+		}
+	}
+	if err := queryDB.Find(&searchResult).Error; err != nil {
 		return nil
 	}
 	return searchResult

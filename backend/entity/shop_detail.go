@@ -16,3 +16,9 @@ type Restaurant struct {
 	Cost        int    `json:",omitempty"`
 	URL         string `json:",omitempty"`
 }
+
+func ToSearchResultMap() {
+	// todo この関数動くようにする
+	//var fields = map[string]string{"category": c.Query("category"), "address": c.Query("address"), "reservable": c.Query("reservable"), "payment": c.Query("payment")}
+	//return map[string]string
+}
