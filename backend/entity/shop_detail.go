@@ -1,6 +1,10 @@
 package entity
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"reflect"
+	"strings"
+)
 
 type Restaurant struct {
 	// fixme gorm.Modelはomitemptyが効かないのでgorm.Modelではなく代わりにIDカラムを追加した方がいいかも
@@ -17,8 +21,21 @@ type Restaurant struct {
 	URL         string `json:",omitempty"`
 }
 
-func ToSearchResultMap() {
-	// todo この関数動くようにする
-	//var fields = map[string]string{"category": c.Query("category"), "address": c.Query("address"), "reservable": c.Query("reservable"), "payment": c.Query("payment")}
-	//return map[string]string
+type SearchResultParams struct {
+	Category   string
+	Address    string
+	Reservable string
+	Payment    string
+}
+
+func StructToMap(data *SearchResultParams) map[string]string {
+	result := make(map[string]string)
+	elem := reflect.ValueOf(data).Elem()
+	size := elem.NumField()
+	for i := 0; i < size; i++ {
+		field := strings.ToLower(elem.Type().Field(i).Name)
+		value := elem.Field(i).String()
+		result[field] = value
+	}
+	return result
 }

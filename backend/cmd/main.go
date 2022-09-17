@@ -4,7 +4,6 @@ import (
 	"Eat100/database"
 	"Eat100/entity"
 	"Eat100/handler"
-	"Eat100/restaurant"
 	"Eat100/shop_detail_scraping"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -18,12 +17,11 @@ const baseURL string = "https://award.tabelog.com/hyakumeiten/"
 func main() {
 	setEnv()
 	//Init()
-	restaurant := restaurant.New()
 	database.DBOpen()
 	defer database.DBClose()
 	gin.SetMode("debug")
 	r := gin.Default()
-	r.GET("/restaurants", handler.RestaurantsGet(restaurant))
+	r.GET("/restaurants", handler.RestaurantsGet())
 	r.Run(":8080")
 }
 
