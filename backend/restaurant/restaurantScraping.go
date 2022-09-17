@@ -1,4 +1,4 @@
-package shop_detail_scraping
+package restaurant
 
 import (
 	"Eat100/entity"
@@ -21,8 +21,8 @@ const (
 // スクレイピングする際の並列実行数
 const parallelism int = 128
 
-func ShopDetailScraping(URL string, categoryName string) []entity.Restaurant {
-	shopDetails := make([]entity.Restaurant, 0)
+func RestaurantDetailScraping(URL string, categoryName string) []entity.Restaurant {
+	restaurantDetails := make([]entity.Restaurant, 0)
 	// collyインスタンス
 	c := *colly.NewCollector(
 		colly.MaxDepth(2),
@@ -42,7 +42,7 @@ func ShopDetailScraping(URL string, categoryName string) []entity.Restaurant {
 	})
 	detailCollector.OnHTML(".rstinfo-table", func(e *colly.HTMLElement) {
 		fmt.Println(e.Request.URL.String())
-		shopDetail := entity.Restaurant{
+		restaurantDetail := entity.Restaurant{
 			//Category:    category.ClassifyCategory(categoryName),
 			Category:    categoryName,
 			ShopName:    e.ChildText(".rstinfo-table__name-wrap"),
@@ -54,8 +54,8 @@ func ShopDetailScraping(URL string, categoryName string) []entity.Restaurant {
 			Cost:        costToInt(e.DOM.Find(".gly-b-dinner").First().Text()),
 			URL:         e.Request.URL.String(),
 		}
-		fmt.Println(shopDetail)
-		shopDetails = append(shopDetails, shopDetail)
+		fmt.Println(restaurantDetails)
+		restaurantDetails = append(restaurantDetails, restaurantDetail)
 	})
 	c.OnRequest(func(request *colly.Request) {
 		fmt.Println("ここにリクエストするよ", request.URL.String())
@@ -74,8 +74,7 @@ func ShopDetailScraping(URL string, categoryName string) []entity.Restaurant {
 	c.Wait()
 	detailCollector.Wait()
 	//// 後処理
-	fmt.Println(shopDetails)
-	return shopDetails
+	return restaurantDetails
 }
 
 func isReservable(status string) bool {

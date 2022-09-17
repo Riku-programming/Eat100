@@ -4,7 +4,7 @@ import (
 	"Eat100/database"
 	"Eat100/entity"
 	"Eat100/handler"
-	"Eat100/shop_detail_scraping"
+	"Eat100/restaurant"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -36,12 +36,12 @@ func Init() {
 		if strings.Contains(searchWord, "_") == true {
 			for _, v := range []string{"east", "west"} {
 				URL := baseURL + strings.Split(searchWord, "_")[0] + "_" + v
-				scrapingResult := shop_detail_scraping.ShopDetailScraping(URL, categoryName)
-				database.CreateShopDetails(db, scrapingResult)
+				scrapingResult := restaurant.RestaurantDetailScraping(URL, categoryName)
+				database.CreateRestaurantDetails(db, scrapingResult)
 			}
 		}
-		scrapingResult := shop_detail_scraping.ShopDetailScraping(baseURL+searchWord, categoryName)
-		database.CreateShopDetails(db, scrapingResult)
+		scrapingResult := restaurant.RestaurantDetailScraping(baseURL+searchWord, categoryName)
+		database.CreateRestaurantDetails(db, scrapingResult)
 	}
 }
 

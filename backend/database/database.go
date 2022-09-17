@@ -67,8 +67,8 @@ func DbInit() *gorm.DB {
 	return db
 }
 
-func Inserts(db *gorm.DB, shopDetails []entity.Restaurant) {
-	result := db.Create(&shopDetails)
+func Inserts(db *gorm.DB, restaurantDetails []entity.Restaurant) {
+	result := db.Create(&restaurantDetails)
 	if result.Error != nil {
 		log.Fatal(result.Error)
 	}
@@ -76,12 +76,12 @@ func Inserts(db *gorm.DB, shopDetails []entity.Restaurant) {
 }
 
 //todo これ本当に必要かよく考える
-//func NewDB(detail entity.ShopDetail) *gorm.DB {
+//func NewDB(detail entity.restaurantDetail) *gorm.DB {
 //	db := DbInit()
 //	db.AutoMigrate(&detail)
 //	return db
 //}
 
-func CreateShopDetails(db *gorm.DB, shopDetails []entity.Restaurant) {
-	Inserts(db, shopDetails)
+func CreateRestaurantDetails(db *gorm.DB, restaurantDetails []entity.Restaurant) {
+	Inserts(db, restaurantDetails)
 }
